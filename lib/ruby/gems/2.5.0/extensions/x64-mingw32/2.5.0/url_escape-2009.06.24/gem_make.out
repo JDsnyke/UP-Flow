@@ -1,0 +1,16 @@
+current directory: C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/url_escape-2009.06.24/ext
+C:/Ruby25-x64/bin/ruby.exe -r ./siteconf20190522-420-1v7vfrw.rb extconf.rb
+creating Makefile
+
+current directory: C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/url_escape-2009.06.24/ext
+make "DESTDIR=" clean
+
+current directory: C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/url_escape-2009.06.24/ext
+make "DESTDIR="
+generating url_escape-x64-mingw32.def
+compiling escape.c
+linking shared-object ext/url_escape.so
+
+current directory: C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/url_escape-2009.06.24/ext
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 url_escape.so ./.gem.20190522-420-ssq81w/ext

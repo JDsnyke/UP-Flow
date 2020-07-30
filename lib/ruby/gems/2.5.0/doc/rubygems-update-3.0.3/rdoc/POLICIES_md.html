@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>POLICIES - RubyGems Update Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+  var index_rel_prefix = "./";
+</script>
+
+<script src="./js/jquery.js"></script>
+<script src="./js/darkfish.js"></script>
+
+<link href="./css/fonts.css" rel="stylesheet">
+<link href="./css/rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="file">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+<div class="nav-section">
+  <h3>Table of Contents</h3>
+
+  <ul class="link-list" role="directory">
+    <li><a href="#label-Pull+Requests">Pull Requests</a>
+    <li><a href="#label-Long-Term+Support">Long-Term Support</a>
+    <li><a href="#label-Bugfix+Releases">Bugfix Releases</a>
+    <li><a href="#label-Security+Releases">Security Releases</a>
+    <li><a href="#label-Ruby+Version+Support">Ruby Version Support</a>
+    <li><a href="#label-Release+Process">Release Process</a>
+    <li><a href="#label-Steps+for+security+releases">Steps for security releases</a>
+    <li><a href="#label-Steps+for+all+releases">Steps for all releases</a>
+    <li><a href="#label-Committer+Access">Committer Access</a>
+    <li><a href="#label-Changing+These+Policies">Changing These Policies</a>
+  </ul>
+</div>
+
+
+  <div id="project-metadata">
+    <div id="fileindex-section" class="nav-section">
+  <h3>Pages</h3>
+
+  <ul class="link-list">
+  
+    <li><a href="./CODE_OF_CONDUCT_md.html">CODE_OF_CONDUCT</a>
+  
+    <li><a href="./CONTRIBUTING_md.html">CONTRIBUTING</a>
+  
+    <li><a href="./History_txt.html">History</a>
+  
+    <li><a href="./LICENSE_txt.html">LICENSE</a>
+  
+    <li><a href="./MAINTAINERS_txt.html">MAINTAINERS</a>
+  
+    <li><a href="./MIT_txt.html">MIT</a>
+  
+    <li><a href="./Manifest_txt.html">Manifest</a>
+  
+    <li><a href="./POLICIES_md.html">POLICIES</a>
+  
+    <li><a href="./README_md.html">README</a>
+  
+    <li><a href="./UPGRADING_md.html">UPGRADING</a>
+  
+    <li><a href="./bundler/CHANGELOG_md.html">CHANGELOG</a>
+  
+    <li><a href="./bundler/CODE_OF_CONDUCT_md.html">CODE_OF_CONDUCT</a>
+  
+    <li><a href="./bundler/CONTRIBUTING_md.html">CONTRIBUTING</a>
+  
+    <li><a href="./bundler/LICENSE_md.html">LICENSE</a>
+  
+    <li><a href="./bundler/README_md.html">README</a>
+  
+    <li><a href="./bundler/man/bundle-add_1.html">bundle-add.1</a>
+  
+    <li><a href="./bundler/man/bundle-binstubs_1.html">bundle-binstubs.1</a>
+  
+    <li><a href="./bundler/man/bundle-check_1.html">bundle-check.1</a>
+  
+    <li><a href="./bundler/man/bundle-clean_1.html">bundle-clean.1</a>
+  
+    <li><a href="./bundler/man/bundle-config_1.html">bundle-config.1</a>
+  
+    <li><a href="./bundler/man/bundle-doctor_1.html">bundle-doctor.1</a>
+  
+    <li><a href="./bundler/man/bundle-exec_1.html">bundle-exec.1</a>
+  
+    <li><a href="./bundler/man/bundle-gem_1.html">bundle-gem.1</a>
+  
+    <li><a href="./bundler/man/bundle-info_1.html">bundle-info.1</a>
+  
+    <li><a href="./bundler/man/bundle-init_1.html">bundle-init.1</a>
+  
+    <li><a href="./bundler/man/bundle-inject_1.html">bundle-inject.1</a>
+  
+    <li><a href="./bundler/man/bundle-install_1.html">bundle-install.1</a>
+  
+    <li><a href="./bundler/man/bundle-list_1.html">bundle-list.1</a>
+  
+    <li><a href="./bundler/man/bundle-lock_1.html">bundle-lock.1</a>
+  
+    <li><a href="./bundler/man/bundle-open_1.html">bundle-open.1</a>
+  
+    <li><a href="./bundler/man/bundle-outdated_1.html">bundle-outdated.1</a>
+  
+    <li><a href="./bundler/man/bundle-package_1.html">bundle-package.1</a>
+  
+    <li><a href="./bundler/man/bundle-platform_1.html">bundle-platform.1</a>
+  
+    <li><a href="./bundler/man/bundle-pristine_1.html">bundle-pristine.1</a>
+  
+    <li><a href="./bundler/man/bundle-remove_1.html">bundle-remove.1</a>
+  
+    <li><a href="./bundler/man/bundle-show_1.html">bundle-show.1</a>
+  
+    <li><a href="./bundler/man/bundle-update_1.html">bundle-update.1</a>
+  
+    <li><a href="./bundler/man/bundle-viz_1.html">bundle-viz.1</a>
+  
+    <li><a href="./bundler/man/bundle_1.html">bundle.1</a>
+  
+    <li><a href="./hide_lib_for_update/note_txt.html">note</a>
+  
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-label="Page POLICIES.md">
+
+<h2 id="label-Pull+Requests">Pull Requests<span><a href="#label-Pull+Requests">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Contributions to RubyGems are made via GitHub pull requests, which must be
+approved by a project committer other than the author. To approve a PR, a
+maintainer can leave a comment including the text “@bundlerbot r+”,
+indicating that they have reviewed the PR and approve it. Bundlerbot will
+then automatically create a merge commit, test the merge, and land the PR
+if the merge commit passes the tests.</p>
+
+<p>This process guarantees that our release branches always have passing
+tests, and reduces siloing of information to a single contributor. For a
+full list of possible commands, see <a
+href="https://bors.tech/documentation/">the Bundlerbot documentation</a>.</p>
+
+<h2 id="label-Long-Term+Support">Long-Term Support<span><a href="#label-Long-Term+Support">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>RubyGems will support Ruby versions for as long as the Ruby team supports
+that Ruby version. That means that the latest RubyGems release will always
+support the currently-supported Ruby versions, and RubyGems security fixes
+will be released for any RubyGems version that shipped inside a
+currently-supported Ruby version.</p>
+
+<h3 id="label-Bugfix+Releases">Bugfix Releases<span><a href="#label-Bugfix+Releases">&para;</a> <a href="#top">&uarr;</a></span></h3>
+
+<p>RubyGems generally releases bugfixes from the master branch. We may mix bug
+fixes and new features in the same release. RubyGems does not guarantee it
+will ship bugfix releases for previous minor or major versions.</p>
+
+<p>For example, after RubyGems 2.5 is released, the RubyGems team will not
+provide non-security fixes for RubyGems 2.4, or any earlier versions.</p>
+
+<h3 id="label-Security+Releases">Security Releases<span><a href="#label-Security+Releases">&para;</a> <a href="#top">&uarr;</a></span></h3>
+
+<p>Security releases will be made for RubyGems minor versions that were
+included in a currently-supported Ruby release.</p>
+
+<p>For example, since RubyGems 2.0 was shipped in Ruby 2.0, RubyGems 2.0 will
+receive security fixes until Ruby 2.0 reaches end-of-life.</p>
+
+<h3 id="label-Ruby+Version+Support">Ruby Version Support<span><a href="#label-Ruby+Version+Support">&para;</a> <a href="#top">&uarr;</a></span></h3>
+
+<p>When a Ruby version reaches end-of-life the following minor release of
+RubyGems will drop backwards compatibility with that Ruby version.</p>
+
+<p>For example, since Ruby 2.2 has reached end-of-life, future RubyGems minor
+releases will only support Ruby 2.3 and above. As of this writing RubyGems
+is at version 2.7, so when RubyGems 2.8 is released, it will only support
+Ruby 2.3 and later.</p>
+
+<h2 id="label-Release+Process">Release Process<span><a href="#label-Release+Process">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Releases of new versions should follow these steps, to ensure the process
+is smooth and no needed steps are missed.</p>
+
+<h3 id="label-Steps+for+security+releases">Steps for security releases<span><a href="#label-Steps+for+security+releases">&para;</a> <a href="#top">&uarr;</a></span></h3>
+<ul><li>
+<p>Obtain CVE numbers as needed from HackerOne or Red Hat.</p>
+</li><li>
+<p>Agree on a release date with ruby-core, so patches can be backported to
+older Ruby versions as needed.</p>
+</li><li>
+<p>Avoid releasing security updates on Fridays, so platform services don&#39;t
+have to work on weekends.</p>
+</li><li>
+<p>Continue with the regular release process below.</p>
+</li></ul>
+
+<h3 id="label-Steps+for+all+releases">Steps for all releases<span><a href="#label-Steps+for+all+releases">&para;</a> <a href="#top">&uarr;</a></span></h3>
+<ul><li>
+<p>Confirm milestone on GitHub is complete</p>
+</li><li>
+<p>Update <a href="History_txt.html">History.txt</a></p>
+</li><li>
+<p>Update <a href="Manifest_txt.html">Manifest.txt</a></p>
+</li><li>
+<p>Create and push git tag</p>
+</li><li>
+<p>Create and push <code>rubygems-update</code> gem and tgz</p>
+</li><li>
+<p>Publish blog post</p>
+</li></ul>
+
+<h2 id="label-Committer+Access">Committer Access<span><a href="#label-Committer+Access">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>RubyGems committers may lose their commit privileges if they are inactive
+for longer than 12 months. Committer permission may be restored upon
+request by having a pull request merged.</p>
+
+<p>This is designed to improve the maintainability of RubyGems by requiring
+committers to maintain familiarity with RubyGems activity and to improve
+the security of RubyGems by preventing idle committers from having their
+commit permissions compromised or exposed.</p>
+
+<h2 id="label-Changing+These+Policies">Changing These Policies<span><a href="#label-Changing+These+Policies">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>These policies were set in order to reduce the burden of maintenance and to
+keep committers current with existing development and policies. RubyGems
+work is primarily volunteer-driven which limits the ability to provide
+long-term support. By joining <a href="https://rubytogether.org">Ruby
+Together</a> you can help extend support for older RubyGems versions.</p>
+</main>
+
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.0.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+
