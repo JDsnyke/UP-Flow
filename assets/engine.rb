@@ -61,7 +61,7 @@ File.open("assets/data/accounts.json", "w+") do |save|
     info "Saved account information!"
 end
 
-# Save account information locally
+# Save transaction information locally
 
 transc_header = "Bearer #{@@decrypt_api_key_final}"
 transc_url = URI("https://api.up.com.au/api/v1/transactions")

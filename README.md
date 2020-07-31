@@ -8,7 +8,7 @@
 
 <p align="center"><img src="https://img.shields.io/badge/powered%20by-Ruby%20&amp;%20Shoes%203-orange.svg" alt="powered by Ruby &amp; Shoes 3" /></p>
 
-<p align="center">UP Flow is an unofficial UP Bank (Australia) utility for windows, that uses the newly released <a href="https://developer.up.com.au">API</a>.</p>
+<p align="center">UP Flow is an unofficial UP Bank (Australia) utility for windows that uses the newly released <a href="https://developer.up.com.au">API</a>.</p>
 
 ## Disclaimer
 
@@ -20,7 +20,9 @@ As stated on their site:
 Up is designed, developed and delivered through a collaboration between Ferocia Pty Ltd ABN 67 152 963 712 ("Ferocia") and Bendigo and Adelaide Bank Limited ABN 11 068 049 178, AFSL and Australian Credit Licence No 237879 ("Bendigo"). Up is a software application ("Up") provided by Up Money Pty Ltd ACN 624 373 084 (“Up Money”), a subsidiary of Bendigo and Adelaide Bank Limited. Bendigo and Adelaide Bank Limited is the issuer of all Up branded banking and financial products provided through Up apps.
 Registered address: The Bendigo Centre, Bath Lane, Bendigo, Vic, 3550.
 
-Furthermore, any issues or damages that may arise are at the discretion of the users of this alpha application. Please proceed with caution!
+Furthermore, any issues or damages that may arise are at the discretion of the users of this alpha application. 
+
+Please proceed with caution!
 ```
 
 ## Getting Started
@@ -66,7 +68,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ## Known issues
 
-* 
+* HIGHLY unoptimized code that's been cobbled together and may cause performance hits.
 
 ## Built With
 
