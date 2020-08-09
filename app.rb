@@ -1,7 +1,197 @@
 #!/usr/bin/env ruby  
 
 class UPFlow < Shoes
-	url "/", :mainscreen
+	url "/", :initialscreen
+	url "/terms", :termscreen
+	url "/getkey", :getkeyscreen
+	url "/savekey", :savekeyscreen
+	url "/initfinal", :initfinalscreen
+	url "/main", :mainscreen
+
+	def initialscreen
+
+		require 'assets/init'
+
+		if @@init == "true"
+
+			background "#262330"
+
+			font "fonts/Circular.ttf" unless Shoes::FONTS.include?('Circular')
+
+			stack :margin_top => "20", :margin_left => "550" do
+				image "assets/images/main-logo.png"
+			end
+
+			stack :margin_top => "20", :margin_left => "20" do
+				title "UP Flow", align: "center", stroke: "#F97C68"
+				subtitle "An unofficial UP Bank (Australia) utility for Windows", align: "center", stroke: "#FFEF6B"
+			end
+
+			stack :margin_top => "60", :margin_left => "20" do
+				para "Follow the on screen prompts to get started!", size: "18", align: "center", stroke: "#F5F3F9"
+			end
+
+			stack :margin_top => "60", :margin_left => "370" do
+				button "Begin", width: 680, height: 68 do visit "/terms" end
+			end
+
+			stack :margin_top => "20", :margin_left => "370" do
+				button "Don't have a bank account? Consider joining!", width: 680, height: 40 do system "start https://hook.up.me/jdsnyke" end
+			end
+
+		else
+			visit "/main"
+		end
+
+	end
+
+	def termscreen
+
+		background "#262330"
+
+		font "fonts/Circular.ttf" unless Shoes::FONTS.include?('Circular')
+
+		stack :margin_top => "20", :margin_left => "550" do
+			image "assets/images/main-logo.png"
+		end
+
+		stack :margin_top => "20", :margin_left => "20" do
+			title "Disclaimer", align: "center", stroke: "#F97C68"
+		end
+
+		stack :margin_top => "30", :margin_left => "20" do
+			para "JDsnyke does not own nor work with UP Bank\n\nAll names, logos and content belong to their respective owners\n\nYour personal access token will be stored offline and will be used to access you transaction history\n\nAny issues or damages that may arise due to this alpha application are at the discretion of the user", size: "18", align: "center", stroke: "#F5F3F9"
+		end
+
+		stack :margin_top => "60", :margin_left => "370" do
+			button "Agree and Continue", width: 680, height: 68 do visit "/getkey" end
+		end
+
+	end
+
+	def getkeyscreen
+
+		background "#262330"
+
+		font "fonts/Circular.ttf" unless Shoes::FONTS.include?('Circular')
+
+		stack :margin_top => "20", :margin_left => "550" do
+			image "assets/images/main-logo.png"
+		end
+
+		stack :margin_top => "20", :margin_left => "20" do
+			title "Get your Personal Access Token", align: "center", stroke: "#F97C68"
+		end
+
+		flow :margin_top => "30", :margin_left => "330" do
+			patlink = "https://api.up.com.au/getting_started"
+			para "Visit ", size: "18", stroke: "#F5F3F9"
+			button "#{patlink}" do system "start #{patlink}" end
+			para " and follow the provided instructions", size: "18", stroke: "#F5F3F9"
+		end
+
+		stack :margin_top => "20", :margin_left => "20" do
+			para "After you have your Personal Access Token ready, continue to the next step", size: "18", align: "center", stroke: "#F5F3F9"
+		end
+
+		stack :margin_top => "60", :margin_left => "370" do
+			button "Proceed", width: 680, height: 68 do visit "/savekey" end
+		end
+
+	end
+
+	def savekeyscreen
+
+		background "#262330"
+
+		font "fonts/Circular.ttf" unless Shoes::FONTS.include?('Circular')
+
+		stack :margin_top => "20", :margin_left => "550" do
+			image "assets/images/main-logo.png"
+		end
+
+		stack :margin_top => "20", :margin_left => "20" do
+			title "Enter and Save your Personal Access Token", align: "center", stroke: "#F97C68"
+		end
+
+		stack :margin_top => "30", :margin_left => "20" do
+			para "Enter or paste your Personal Access Token in the text box below and continue", size: "18", align: "center", stroke: "#F5F3F9"
+		end
+
+		stack :margin_top => "20", :margin_left => "300" do
+			@init_api = edit_line "", :width => 820, tooltip: "It should be something like up:yeah:1234567890"
+		end
+
+		stack :margin_top => "60", :margin_left => "370" do
+			button "Save and Proceed", width: 680, height: 68 do
+				if @init_api.text() == ""
+					alert "The text box is empty! Please fill it in before proceeding!", title: "Enter and Save your Personal Access Token"
+				else
+					if @init_api.text.include? "up:yeah:"
+						Thread.new do
+							require 'fileutils'
+							FileUtils.cp("assets/keys/crypt.gkey", "assets/temp/crypt.rb")
+							require "assets/temp/crypt"
+							@@crypt_final = Crypt.class_variable_get(:@@cypher_bak)
+							File.open("assets/temp/crypt.rb", "w") {|clear_temp_crypt| clear_temp_crypt.truncate(0)}
+							@init_api_save = @init_api.text
+							i = @init_api_save
+							extract = 0
+							newstring = ""
+							while extract < i.length
+								a = i[extract].ord
+								b = @@crypt_final[a].to_s
+								newstring = newstring + b
+								extract = extract + 1
+							end
+							if @init_api.text.include? ""
+								@init_api_save = newstring
+							end
+							final_shuffle =  newstring.to_i * @@crypt_final[129].to_i
+							final_encrypt = final_shuffle.to_s.reverse
+							File.open("assets/keys/api.txt", "w+") do |init_encrypt|
+								init_encrypt.write "#{final_encrypt}"
+							end
+							File.open("assets/init.rb", "w+") do |init_file_false|
+								init_file_false.write "@@init = 'false'"
+							end
+							visit "/initfinal"
+						end
+					else
+						alert "There seems to be something wrong with the entered token.\n\nPlease double check!", title: "Enter and Save your Personal Access Token"
+					end
+				end
+			end
+		end
+
+	end
+
+	def initfinalscreen
+		background "#262330"
+
+		font "fonts/Circular.ttf" unless Shoes::FONTS.include?('Circular')
+
+		stack :margin_top => "20", :margin_left => "550" do
+			image "assets/images/main-logo.png"
+		end
+
+		stack :margin_top => "20", :margin_left => "20" do
+			title "Get Wise with your Money", align: "center", stroke: "#F97C68"
+		end
+
+		stack :margin_top => "30", :margin_left => "20" do
+			para "Congrats, UP Flow has been setup successfully!", size: "18", align: "center", stroke: "#F5F3F9"
+		end
+
+		stack :margin_top => "20", :margin_left => "660" do
+			image "assets/images/completed.png"
+		end
+
+		stack :margin_top => "60", :margin_left => "370" do
+			button "Get Started", width: 680, height: 68 do visit "/main" end
+		end
+
+	end
 		
 	def mainscreen
 	
@@ -76,94 +266,14 @@ class UPFlow < Shoes
 						button "Clear", tooltip: "Clear saved user API" do
 							@enter_api_key.text = "0"
 							File.open("assets/keys/api.txt", "w+") {|clear_api| clear_api.truncate(0)}
-							if confirm "Done!\n\nPlease restart UP Flow for the changes to take effect!\n\nProceed?", title: "Task Completed"
+							File.open("assets/data/accounts.json", "w+") {|clear_accounts| clear_accounts.truncate(0)}
+							File.open("assets/data/transactions.json", "w+") {|clear_transc| clear_transc.truncate(0)}
+							File.open("assets/init.rb", "w+") do |init_file_false|
+								init_file_false.write "@@init = 'true'"
+							end
+							if confirm "Done!\n\nUP Flow will now close.\n\nProceed?\n\n", title: "Task Completed"
 								Shoes.quit()
 							end
-						end
-						para "  "
-						button "Run", tooltip: "Force run launch scripts" do
-
-							Thread.new do
-								# Load crypt.gkey after launch
-
-								@p_info.text = "Loading crypt.gkey..."
-								@p_info.stroke = blue
-
-								require 'fileutils'
-								FileUtils.cp("assets/keys/crypt.gkey", "assets/temp/crypt.rb")
-								require "assets/temp/crypt"
-								@@crypt_final = Crypt.class_variable_get(:@@cypher_bak)
-								File.open("assets/temp/crypt.rb", "w") {|clear_temp_crypt| clear_temp_crypt.truncate(0)}
-								info "Loaded constants from temp files!"
-
-								# Decrypt API Key
-
-								@p_info.text = "Decrypting API Key..."
-
-								@@decrypt_api_file = File.read("assets/keys/api.txt")
-								@decrypt_api_file_conv = @@decrypt_api_file
-								@decrypt_api_file_conv2 = @decrypt_api_file_conv.reverse
-								@decrypt_api_file_conv3 =  @decrypt_api_file_conv2.to_i / @@crypt_final[129].to_i
-								@decrypt_api_key = @decrypt_api_file_conv3.to_s
-								if @decrypt_api_key.include? ""
-									@decrypt_api_key.gsub! @@crypt_final[0], "0"
-									u = 0
-									while u <= 128
-										@decrypt_api_key.gsub! @@crypt_final[u], u.chr	
-										u = u + 1
-									end
-								end
-								@@decrypt_api_key_final = @decrypt_api_key.to_s
-								info "Decrypted the API Key!"
-
-								# Save account information locally
-
-								@p_info.text = "Saving account information locally..."
-
-								acc_header = "Bearer #{@@decrypt_api_key_final}"
-								acc_url = URI("https://api.up.com.au/api/v1/accounts")
-
-								acc_http = Net::HTTP.new(acc_url.host, acc_url.port)
-								acc_http.use_ssl = true
-								acc_http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
-								acc_request = Net::HTTP::Get.new(acc_url)
-								acc_request["Authorization"] = "#{acc_header}"
-								@@acc_response = acc_http.request(acc_request)
-
-								File.open("assets/data/accounts.json", "w+") do |save|
-									save.write "#{@@acc_response.read_body}"
-									info "Saved account information!"
-								end
-
-								# Save transaction information locally
-
-								@p_info.text = "Saving transaction information locally..."
-
-								transc_header = "Bearer #{@@decrypt_api_key_final}"
-								transc_url = URI("https://api.up.com.au/api/v1/transactions")
-
-								transc_http = Net::HTTP.new(transc_url.host, transc_url.port)
-								transc_http.use_ssl = true
-								transc_http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
-								transc_request = Net::HTTP::Get.new(transc_url)
-								transc_request["Authorization"] = "#{transc_header}"
-
-								@@transc_response = transc_http.request(transc_request)
-
-								File.open("assets/data/transactions.json", "w+") do |save|
-									save.write "#{@@transc_response.read_body}"
-									info "Saved transaction information!"
-								end
-
-								@p_info.text = "All done! Please click the quit button to close the app."
-								@p_info.stroke = green
-							end
-						end
-						para "  "
-						button "Quit", stroke: red, tooltip: "Close the UP Flow app" do
-							Shoes.quit()
 						end
 					end
 				end
@@ -224,7 +334,7 @@ class UPFlow < Shoes
 		my_accounts["data"].each do |list_s|
 			stack :margin_top => "30", :margin_left => "380" do
 				account_value = list_s["attributes"]["balance"]["value"]
-				button "#{list_s["attributes"]["displayName"]} : $#{account_value} AUD", width:680, height: 68 do
+				button "#{list_s["attributes"]["displayName"]} : $#{account_value} AUD", width: 680, height: 68 do
 					window :title => "UP Flow - #{list_s["attributes"]["displayName"]}" do
 						
 						background "#262330"
