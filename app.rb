@@ -1,4 +1,8 @@
-#!/usr/bin/env ruby  
+#!/usr/bin/env ruby
+
+Shoes.setup do
+	gem 'fetcher', '~> 0.4.5'
+end
 
 class UPFlow < Shoes
 	url "/", :initialscreen
@@ -16,7 +20,7 @@ class UPFlow < Shoes
 
 			background "#262330"
 
-			font "fonts/Circular.ttf" unless Shoes::FONTS.include?('Circular')
+			font "assets/setup/Circular.ttf" unless Shoes::FONTS.include?('Circular')
 
 			stack :margin_top => "20", :margin_left => "550" do
 				image "assets/images/main-logo.png"
@@ -36,7 +40,19 @@ class UPFlow < Shoes
 			end
 
 			stack :margin_top => "20", :margin_left => "370" do
-				button "Don't have a bank account? Consider joining!", width: 680, height: 40 do system "start https://hook.up.me/jdsnyke" end
+				accountref = "https://hook.up.me/jdsnyke"
+				button "Don't have a bank account? Consider joining!", width: 680, height: 40 do 
+					if RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
+						system "start #{accountref}"
+						info "Launched link to obtain Personal Access Token!"
+					elsif RbConfig::CONFIG['host_os'] =~ /darwin/
+						system "open #{accountref}"
+						info "Launched link to obtain Personal Access Token!"
+					elsif RbConfig::CONFIG['host_os'] =~ /linux|bsd/
+						system "xdg-open #{accountref}"
+						info "Launched link to obtain Personal Access Token!"
+					end 
+				end
 			end
 
 		else
@@ -49,7 +65,7 @@ class UPFlow < Shoes
 
 		background "#262330"
 
-		font "fonts/Circular.ttf" unless Shoes::FONTS.include?('Circular')
+		font "assets/setup/Circular.ttf" unless Shoes::FONTS.include?('Circular')
 
 		stack :margin_top => "20", :margin_left => "550" do
 			image "assets/images/main-logo.png"
@@ -73,7 +89,7 @@ class UPFlow < Shoes
 
 		background "#262330"
 
-		font "fonts/Circular.ttf" unless Shoes::FONTS.include?('Circular')
+		font "assets/setup/Circular.ttf" unless Shoes::FONTS.include?('Circular')
 
 		stack :margin_top => "20", :margin_left => "550" do
 			image "assets/images/main-logo.png"
@@ -86,7 +102,18 @@ class UPFlow < Shoes
 		flow :margin_top => "30", :margin_left => "330" do
 			patlink = "https://api.up.com.au/getting_started"
 			para "Visit ", size: "18", stroke: "#F5F3F9"
-			button "#{patlink}" do system "start #{patlink}" end
+			button "#{patlink}" do
+				if RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
+					system "start #{patlink}"
+					info "Launched link to obtain Personal Access Token!"
+				elsif RbConfig::CONFIG['host_os'] =~ /darwin/
+					system "open #{patlink}"
+					info "Launched link to obtain Personal Access Token!"
+				elsif RbConfig::CONFIG['host_os'] =~ /linux|bsd/
+					system "xdg-open #{patlink}"
+					info "Launched link to obtain Personal Access Token!"
+				end
+			end
 			para " and follow the provided instructions", size: "18", stroke: "#F5F3F9"
 		end
 
@@ -104,7 +131,7 @@ class UPFlow < Shoes
 
 		background "#262330"
 
-		font "fonts/Circular.ttf" unless Shoes::FONTS.include?('Circular')
+		font "assets/setup/Circular.ttf" unless Shoes::FONTS.include?('Circular')
 
 		stack :margin_top => "20", :margin_left => "550" do
 			image "assets/images/main-logo.png"
@@ -169,7 +196,7 @@ class UPFlow < Shoes
 	def initfinalscreen
 		background "#262330"
 
-		font "fonts/Circular.ttf" unless Shoes::FONTS.include?('Circular')
+		font "assets/setup/Circular.ttf" unless Shoes::FONTS.include?('Circular')
 
 		stack :margin_top => "20", :margin_left => "550" do
 			image "assets/images/main-logo.png"
@@ -202,7 +229,7 @@ class UPFlow < Shoes
 		@apiitem = menuitem "Set API Key" do
 			window :title => "UP Flow - Set API Key", height: 140 do
 
-				font "fonts/Circular.ttf" unless Shoes::FONTS.include?('Circular')
+				font "assets/setup/Circular.ttf" unless Shoes::FONTS.include?('Circular')
 
 				stack margin_top: 20, margin_left: 13 do
 					@enter_api_key = edit_line "", :width => 570
@@ -288,13 +315,42 @@ class UPFlow < Shoes
 		updateseperator = menuitem "---"
 		helpmenu << updateseperator
 		@updateitem =  menuitem "Check for Updates", key: "control_u" do
-			current_dir = Dir.pwd
-			system "start #{current_dir}/updater.exe"
+			require 'fetcher'
+			Fetcher.copy("https://raw.githubusercontent.com/JDsnyke/UP-Flow/master/assets/version/latest.ver", "assets/version/latest.ver")
+			info "Fetched latest.ver from Github!"
+
+			require 'fileutils'
+			if FileUtils.cmp("assets/version/latest.ver", "assets/version/current.ver") == true
+				alert "Congrats! You are running the latest version of UP Flow.", title: "Check for Updates"
+			else
+				if confirm "This app is outdated! \n\nVisit the repo for the latest version?\n\n", title: "Check for Updates"
+					updatelink = "https://www.github.com/JDsnyke/UP-Flow/releases/latest"
+					if RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
+						system "start #{updatelink}"
+						info "Launched lastest release link in browser!"
+					elsif RbConfig::CONFIG['host_os'] =~ /darwin/
+						system "open #{updatelink}"
+						info "Launched lastest release link in browser!"
+					elsif RbConfig::CONFIG['host_os'] =~ /linux|bsd/
+						system "xdg-open #{updatelink}"
+						info "Launched lastest release link in browser!"
+					end 
+				end
+			end
 		end
 		helpmenu << @updateitem
 		@repoitem = menuitem "Visit Repo" do
 			repolink = "https://www.github.com/JDsnyke/UP-Flow"
-			system "start #{repolink}"
+			if RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
+				system "start #{repolink}"
+				info "Launched repo link in browser!"
+			elsif RbConfig::CONFIG['host_os'] =~ /darwin/
+				system "open #{repolink}"
+				info "Launched repo link in browser!"
+			elsif RbConfig::CONFIG['host_os'] =~ /linux|bsd/
+				system "xdg-open #{repolink}"
+				info "Launched repo link in browser!"
+			end
 		end
 		helpmenu << @repoitem
 		aboutseperator = menuitem "---"
@@ -313,7 +369,7 @@ class UPFlow < Shoes
 		# Body
 		background "#262330"
 
-		font "fonts/Circular.ttf" unless Shoes::FONTS.include?('Circular')
+		font "assets/setup/Circular.ttf" unless Shoes::FONTS.include?('Circular')
 
 		account_json_file = IO.read("assets/data/accounts.json")
 		my_accounts = JSON.parse(account_json_file)
@@ -339,7 +395,7 @@ class UPFlow < Shoes
 						
 						background "#262330"
 
-						font "fonts/Circular.ttf" unless Shoes::FONTS.include?('Circular')
+						font "assets/setup/Circular.ttf" unless Shoes::FONTS.include?('Circular')
 
 						description = []
 						value = []
