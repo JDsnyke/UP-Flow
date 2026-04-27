@@ -1,0 +1,13 @@
+---
+description: React/TypeScript UI standards for UP Flow desktop
+globs: apps/desktop/src/**/*.tsx
+alwaysApply: false
+---
+
+# Frontend standards
+
+- Use **TanStack Query** for server state; colocate `queryKey` under `["up", ...]`.
+- Every async view needs **loading**, **empty**, and **error** states (spinner, message, retry).
+- Prefer **Tailwind** utility classes and shared primitives in `src/components/ui.tsx`.
+- Keep imports at the **top of the file** (no dynamic/inline imports).
+- Use **exhaustive** handling for small string unions (`status`, `deliveryStatus`) with a final `never` branch where appropriate.

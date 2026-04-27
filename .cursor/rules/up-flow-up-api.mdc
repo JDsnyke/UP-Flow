@@ -1,0 +1,13 @@
+---
+description: Conventions for calling the Up Banking API from UP Flow
+globs: apps/desktop/src/lib/up-api/**/*
+alwaysApply: false
+---
+
+# Up API client rules
+
+- Use **Tauri** `invoke` → Rust `up_api_request` for HTTP (avoids browser CORS). Do not `fetch("https://api.up.com.au/...")` from the React layer.
+- Base path: `/api/v1` is already applied in Rust; pass paths like `/accounts`, `/transactions`.
+- **Pagination:** follow opaque `links.next` / `links.prev` URLs; parse with `splitUpPaginationUrl` and never use `filter[since]` / `filter[until]` as pagination cursors.
+- **Errors:** map `errors[]` from JSON; treat `401`, `422`, `429`, `5xx` distinctly; backoff on `429`.
+- **Categories:** only **leaf** (non-parent) category ids may be assigned to transactions (`PATCH .../relationships/category`).

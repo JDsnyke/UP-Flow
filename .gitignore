@@ -1,1 +1,12 @@
+# UP Flow — modern desktop app
+apps/desktop/node_modules/
+apps/desktop/dist/
+apps/desktop/src-tauri/target/
+
+# OS / editor
+.DS_Store
+.idea/
+*.log
+
+# Legacy / local scratch
 test.txt

@@ -1,0 +1,11 @@
+---
+description: Security rules for UP Flow (tokens, TLS, secrets)
+alwaysApply: true
+---
+
+# UP Flow security
+
+- Never store the Up **Personal Access Token** in plaintext files, env checked into git, or client-only `localStorage`. Use Tauri + OS keychain (`keyring`) as in `apps/desktop/src-tauri/src/lib.rs`.
+- Never disable TLS verification (`VERIFY_NONE`, insecure HTTP client flags). All Up traffic must use verified HTTPS (`rustls` / system trust).
+- Do not log tokens, webhook `secretKey`, or full API responses in production builds.
+- Webhook handlers must verify `X-Up-Authenticity-Signature` (SHA-256 HMAC of raw body) per [Up API docs](https://developer.up.com.au/).

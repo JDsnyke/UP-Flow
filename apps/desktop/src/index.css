@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  --up-bg: #0f0e14;
+  --up-surface: #1a1824;
+  --up-border: #2d2a3a;
+  --up-accent: #f97c68;
+  --up-text: #f5f3f9;
+  --up-muted: #9b96ad;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+  background: var(--up-bg);
+  color: var(--up-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Recharts text in dark theme */
+.recharts-cartesian-axis-tick-value {
+  fill: var(--up-muted);
+  font-size: 11px;
+}
+
+.recharts-legend-item-text {
+  color: var(--up-text) !important;
+}
