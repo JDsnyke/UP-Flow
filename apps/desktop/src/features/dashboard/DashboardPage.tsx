@@ -1,7 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+  Bar,
+  BarChart,
+} from "recharts";
 import { useTokenGate } from "../../hooks/useTokenGate";
-import { fetchAccounts } from "../../lib/up-api/client";
+import { fetchAccounts, fetchAllTransactionsByNext } from "../../lib/up-api/client";
 import { formatAud } from "../../lib/format";
 import { Button, Card, EmptyState, Spinner } from "../../components/ui";
 
@@ -10,6 +21,11 @@ export function DashboardPage() {
   const accounts = useQuery({
     queryKey: ["up", "accounts"],
     queryFn: fetchAccounts,
+    enabled: gate.data === true,
+  });
+  const cashflow = useQuery({
+    queryKey: ["up", "dashboard", "cashflow"],
+    queryFn: () => fetchAllTransactionsByNext({ "page[size]": "100" }, 6),
     enabled: gate.data === true,
   });
 
@@ -68,6 +84,22 @@ export function DashboardPage() {
 
   const sumBalances = (rows: typeof list) =>
     rows.reduce((acc, a) => acc + Number.parseFloat(a.attributes.balance.value), 0);
+
+  const balanceData = list.map((a) => ({
+    name: a.attributes.displayName,
+    balance: Number.parseFloat(a.attributes.balance.value),
+  }));
+
+  const dayMap = new Map<string, number>();
+  for (const tx of cashflow.data ?? []) {
+    const day = tx.attributes.createdAt.slice(0, 10);
+    const amount = Number.parseFloat(tx.attributes.amount.value);
+    dayMap.set(day, (dayMap.get(day) ?? 0) + amount);
+  }
+  const cashflowData = Array.from(dayMap.entries())
+    .map(([date, total]) => ({ date, total: Number(total.toFixed(2)) }))
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .slice(-30);
 
   return (
     <div className="space-y-6">
@@ -131,6 +163,47 @@ export function DashboardPage() {
           ))}
         </ul>
       </Card>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card className="min-h-[320px]">
+          <h2 className="mb-2 font-semibold">Account balances</h2>
+          {accounts.isLoading ? (
+            <div className="h-[260px] animate-pulse rounded bg-white/5" />
+          ) : (
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={balanceData} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="#2d2a3a" />
+                <XAxis type="number" />
+                <YAxis type="category" width={140} dataKey="name" tick={{ fontSize: 11 }} />
+                <Tooltip formatter={(value) => formatAud(String(value))} />
+                <Bar dataKey="balance" fill="#f97c68" />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </Card>
+        <Card className="min-h-[320px]">
+          <h2 className="mb-2 font-semibold">30-day net cashflow</h2>
+          {cashflow.isLoading ? (
+            <div className="h-[260px] animate-pulse rounded bg-white/5" />
+          ) : (
+            <ResponsiveContainer width="100%" height={260}>
+              <LineChart data={cashflowData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#2d2a3a" />
+                <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+                <YAxis tick={{ fontSize: 10 }} />
+                <Tooltip
+                  formatter={(value) =>
+                    typeof value === "number"
+                      ? formatAud(value.toFixed(2))
+                      : String(value ?? "")
+                  }
+                />
+                <Line type="monotone" dataKey="total" stroke="#38bdf8" strokeWidth={2} dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
+        </Card>
+      </div>
     </div>
   );
 }

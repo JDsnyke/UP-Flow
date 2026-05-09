@@ -36,17 +36,18 @@ If the Tauri CLI complains about `--ci`, run with an empty `CI` env var: `CI= np
 
 ### Features
 
-- Dashboard (accounts, transactional / saver totals)
-- Paginated transactions with status filter, search (loaded pages), category & tag edits (leaf categories only)
+- Dashboard (accounts, totals, balance and cashflow charts)
+- Paginated transactions with status/date/account/category/tag filters, URL-persisted state, category & tag edits (leaf categories only)
 - Categories browser (all vs assignable leaves)
 - Attachments list with open-in-browser for temporary file URLs
 - Webhooks: create, delete, ping, delivery logs
-- Analytics: sample spend by category and by day (paginated fetch)
-- Settings: validate token with `GET /util/ping`, save/remove token
+- Analytics: spend/income/net views, monthly charts, category drilldown (paginated fetch)
+- Settings: validate token with `GET /util/ping`, save/remove token, webhook signature self-test
+- Rust API proxy includes retry/backoff for 429/5xx and strict TLS/CSP hardening
 
 ## Legacy Shoes app (archived)
 
-The original **Ruby + Shoes 3** prototype (`app.rb`, bundled Shoes runtime under `lib/`) is **unmaintained** and **Windows-oriented**. It is kept for reference only; use `apps/desktop` for all new work. See [LEGACY-SHOES.md](LEGACY-SHOES.md).
+The original **Ruby + Shoes 3** prototype (`legacy/app.rb`, bundled Shoes runtime under `legacy/lib/`) is **unmaintained** and **Windows-oriented**. It is kept for reference only; use `apps/desktop` for all new work. See [LEGACY-SHOES.md](LEGACY-SHOES.md).
 
 ## Disclaimer
 

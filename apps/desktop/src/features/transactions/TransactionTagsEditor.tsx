@@ -25,6 +25,7 @@ export function TransactionTagsEditor({
 }) {
   const qc = useQueryClient();
   const currentUnique = useMemo(() => uniqueTags(currentTagIds), [currentTagIds]);
+  const currentUniqueKey = useMemo(() => currentUnique.join("|"), [currentUnique]);
   const [selected, setSelected] = useState<string[]>(currentUnique);
   const [search, setSearch] = useState("");
   const [extraPages, setExtraPages] = useState<Paginated<TagResource>[]>([]);
@@ -34,7 +35,7 @@ export function TransactionTagsEditor({
     setSelected(currentUnique);
     setExtraPages([]);
     setSearch("");
-  }, [transactionId, currentUnique.join("|")]);
+  }, [transactionId, currentUnique, currentUniqueKey]);
 
   const first = useQuery({
     queryKey: ["up", "tags", "p0", PAGE_SIZE],

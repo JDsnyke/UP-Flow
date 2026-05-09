@@ -18,7 +18,11 @@ function formatErrorBody(status: number, body: string): string {
     const parsed = JSON.parse(body) as UpErrorPayload;
     if (parsed.errors?.length) {
       return parsed.errors
-        .map((e) => e.detail ?? e.title ?? "Unknown error")
+        .map((e) => {
+          const msg = e.detail ?? e.title ?? "Unknown error";
+          const param = e.source?.parameter;
+          return param ? `${msg} (parameter: ${param})` : msg;
+        })
         .join("; ");
     }
   } catch {
@@ -29,6 +33,12 @@ function formatErrorBody(status: number, body: string): string {
   }
   if (status === 429) {
     return "Rate limited — wait and try again (exponential backoff recommended).";
+  }
+  if (status === 422) {
+    return "Validation failed — check request fields and filters.";
+  }
+  if (status >= 500) {
+    return "Up API is temporarily unavailable. Please retry shortly.";
   }
   return body.slice(0, 500) || `HTTP ${status}`;
 }

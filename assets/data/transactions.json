@@ -1,1 +1,0 @@
-{"errors":[{"status":"401","title":"Not Authorized","detail":"The request was not authenticated because no valid credential was found in the Authorization header, or the Authorization header was not present."}]}

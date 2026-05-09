@@ -1,5 +1,7 @@
 <h1 align="center" id="up-flow">UP Flow</h1>
 
+<p align="center"><strong>Archive notice:</strong> This page describes the archived Shoes 3 prototype. The current app is <a href="https://github.com/JDsnyke/UP-Flow/tree/main/apps/desktop">apps/desktop</a>.</p>
+
 <p align="center"><a href="https://github.com/JDsnyke/UP-Flow/subscription"><img src="https://img.shields.io/github/watchers/JDsnyke/UP-Flow.svg?style=social&amp;label=Watch" alt="GitHub watchers" /></a> <a href="https://github.com/JDsnyke/UP-Flow/stargazers"><img src="https://img.shields.io/github/stars/JDsnyke/UP-Flow.svg?style=social&amp;label=Stars" alt="GitHub stars" /></a> <a href="https://github.com/JDsnyke/UP-Flow/fork"><img src="https://img.shields.io/github/forks/JDsnyke/UP-Flow.svg?style=social&amp;label=Fork" alt="GitHub forks" /></a></p>
 
 <p align="center"><img src="https://img.shields.io/github/last-commit/JDsnyke/UP-Flow.svg" alt="GitHub last commit" /> <img src="https://img.shields.io/github/issues/JDsnyke/UP-Flow.svg" alt="GitHub issues" /> <img src="https://img.shields.io/github/issues-pr/JDsnyke/UP-Flow.svg" alt="GitHub pull requests" /> <img src="https://img.shields.io/github/repo-size/JDsnyke/UP-Flow.svg" alt="GitHub repo size in bytes" /> </p>

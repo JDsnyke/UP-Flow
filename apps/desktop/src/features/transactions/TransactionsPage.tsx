@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { useToast } from "../../components/Toast";
 import { useTokenGate } from "../../hooks/useTokenGate";
 import {
   addTransactionTags,
@@ -19,15 +20,19 @@ import { formatAud, formatDateTime } from "../../lib/format";
 import { Badge, Button, Card, EmptyState, Spinner } from "../../components/ui";
 
 export function TransactionsPage() {
+  const { pushToast } = useToast();
   const gate = useTokenGate();
   const qc = useQueryClient();
-  const [status, setStatus] = useState<"" | "HELD" | "SETTLED">("");
-  const [search, setSearch] = useState("");
-  const [sinceDate, setSinceDate] = useState("");
-  const [untilDate, setUntilDate] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("");
-  const [tagFilter, setTagFilter] = useState("");
-  const [accountFilter, setAccountFilter] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [status, setStatus] = useState<"" | "HELD" | "SETTLED">(
+    (searchParams.get("status") as "" | "HELD" | "SETTLED") || "",
+  );
+  const [search, setSearch] = useState(searchParams.get("search") ?? "");
+  const [sinceDate, setSinceDate] = useState(searchParams.get("since") ?? "");
+  const [untilDate, setUntilDate] = useState(searchParams.get("until") ?? "");
+  const [categoryFilter, setCategoryFilter] = useState(searchParams.get("category") ?? "");
+  const [tagFilter, setTagFilter] = useState(searchParams.get("tag") ?? "");
+  const [accountFilter, setAccountFilter] = useState(searchParams.get("account") ?? "");
   const [extraPages, setExtraPages] = useState<Paginated<TransactionResource>[]>(
     [],
   );
@@ -57,6 +62,18 @@ export function TransactionsPage() {
   useEffect(() => {
     setExtraPages([]);
   }, [baseQuery, accountFilter]);
+
+  useEffect(() => {
+    const next = new URLSearchParams();
+    if (status) next.set("status", status);
+    if (search) next.set("search", search);
+    if (sinceDate) next.set("since", sinceDate);
+    if (untilDate) next.set("until", untilDate);
+    if (categoryFilter) next.set("category", categoryFilter);
+    if (tagFilter) next.set("tag", tagFilter);
+    if (accountFilter) next.set("account", accountFilter);
+    setSearchParams(next, { replace: true });
+  }, [status, search, sinceDate, untilDate, categoryFilter, tagFilter, accountFilter, setSearchParams]);
 
   const firstPage = useQuery({
     queryKey: ["up", "transactions", accountFilter || "all", baseQuery],
@@ -97,6 +114,14 @@ export function TransactionsPage() {
       t.attributes.description.toLowerCase().includes(s),
     );
   }, [firstPage.data, extraPages, search]);
+
+  const categoryNameById = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const c of categories.data ?? []) {
+      map.set(c.id, c.attributes.name);
+    }
+    return map;
+  }, [categories.data]);
 
   const lastPage =
     extraPages.length > 0
@@ -321,6 +346,8 @@ export function TransactionsPage() {
                   void qc.invalidateQueries({ queryKey: ["up", "accounts"] });
                   void qc.invalidateQueries({ queryKey: ["up", "analytics"] });
                 }}
+                categoryNameById={categoryNameById}
+                onError={(message) => pushToast({ tone: "error", title: "Update failed", detail: message })}
               />
             ))}
           </tbody>
@@ -342,11 +369,15 @@ function TransactionRow({
   leafCats,
   catsLoading,
   onMutate,
+  categoryNameById,
+  onError,
 }: {
   t: TransactionResource;
   leafCats: { id: string; attributes: { name: string } }[];
   catsLoading: boolean;
   onMutate: () => void;
+  categoryNameById: Map<string, string>;
+  onError: (message: string) => void;
 }) {
   const [cat, setCat] = useState(t.relationships.category.data?.id ?? "");
   const [tagsToAdd, setTagsToAdd] = useState("");
@@ -362,6 +393,7 @@ function TransactionRow({
       await setTransactionCategory(t.id, v);
     },
     onSuccess: onMutate,
+    onError: (error: Error) => onError(error.message),
   });
 
   const addTags = useMutation({
@@ -379,6 +411,7 @@ function TransactionRow({
       setTagsToAdd("");
       onMutate();
     },
+    onError: (error: Error) => onError(error.message),
   });
 
   const remTags = useMutation({
@@ -396,7 +429,24 @@ function TransactionRow({
       setTagsToRemove("");
       onMutate();
     },
+    onError: (error: Error) => onError(error.message),
   });
+
+  const categoryId = t.relationships.category.data?.id ?? null;
+  const categoryName = categoryId ? categoryNameById.get(categoryId) ?? categoryId : "Uncategorized";
+
+  const statusTone = (() => {
+    switch (t.attributes.status) {
+      case "SETTLED":
+        return "ok" as const;
+      case "HELD":
+        return "warn" as const;
+      default: {
+        const exhaustive: never = t.attributes.status;
+        throw new Error(`Unhandled status ${exhaustive}`);
+      }
+    }
+  })();
 
   return (
     <tr className="align-top">
@@ -406,10 +456,15 @@ function TransactionRow({
       <td className="py-3 pr-2">
         <div className="font-medium">{t.attributes.description}</div>
         {t.relationships.tags.data.length ? (
-          <div className="mt-1 text-xs text-[var(--up-muted)]">
-            Tags: {t.relationships.tags.data.map((x) => x.id).join(", ")}
+          <div className="mt-1 flex flex-wrap gap-1">
+            {t.relationships.tags.data.map((x) => (
+              <Badge key={x.id} tone="neutral">
+                {x.id}
+              </Badge>
+            ))}
           </div>
         ) : null}
+        <div className="mt-1 text-xs text-[var(--up-muted)]">Category: {categoryName}</div>
       </td>
       <td
         className={`py-3 pr-2 font-medium ${
@@ -421,7 +476,7 @@ function TransactionRow({
         {formatAud(t.attributes.amount.value)}
       </td>
       <td className="py-3 pr-2">
-        <Badge tone={t.attributes.status === "SETTLED" ? "ok" : "warn"}>
+        <Badge tone={statusTone}>
           {t.attributes.status}
         </Badge>
         {!t.attributes.isCategorizable ? (

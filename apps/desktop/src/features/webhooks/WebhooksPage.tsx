@@ -2,6 +2,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Fragment, useEffect, useState } from "react";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { Link } from "react-router-dom";
+import { ConfirmDialog } from "../../components/ConfirmDialog";
+import { useToast } from "../../components/Toast";
 import { useTokenGate } from "../../hooks/useTokenGate";
 import {
   createWebhook,
@@ -15,7 +17,21 @@ import type { Paginated, WebhookDeliveryLogResource } from "../../lib/up-api/typ
 import { formatDateTime } from "../../lib/format";
 import { Badge, Button, Card, EmptyState, Spinner } from "../../components/ui";
 
+function deliveryClassFor(status: string): string {
+  switch (status) {
+    case "DELIVERED":
+      return "text-emerald-300";
+    case "UNDELIVERABLE":
+      return "text-amber-200";
+    case "BAD_RESPONSE_CODE":
+      return "text-red-300";
+    default:
+      return "text-[var(--up-muted)]";
+  }
+}
+
 export function WebhooksPage() {
+  const { pushToast } = useToast();
   const gate = useTokenGate();
   const qc = useQueryClient();
   const [url, setUrl] = useState("");
@@ -28,6 +44,7 @@ export function WebhooksPage() {
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [expandedLogId, setExpandedLogId] = useState<string | null>(null);
   const [copiedSnippet, setCopiedSnippet] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null);
 
   useEffect(() => {
     setLogExtra([]);
@@ -51,10 +68,15 @@ export function WebhooksPage() {
       setDescription("");
       void qc.invalidateQueries({ queryKey: ["up", "webhooks"] });
       if (data.attributes.secretKey) {
-        void alert(
-          `Webhook created.\n\nSave this secret key now (shown once):\n\n${data.attributes.secretKey}`,
-        );
+        pushToast({
+          tone: "success",
+          title: "Webhook created",
+          detail: "Secret key is shown once in this response payload.",
+        });
       }
+    },
+    onError: (error: Error) => {
+      pushToast({ tone: "error", title: "Could not create webhook", detail: error.message });
     },
   });
 
@@ -64,13 +86,24 @@ export function WebhooksPage() {
       void qc.invalidateQueries({ queryKey: ["up", "webhooks"] });
       setSelectedId(null);
       setLogExtra([]);
+      pushToast({ tone: "success", title: "Webhook deleted" });
+    },
+    onError: (error: Error) => {
+      pushToast({ tone: "error", title: "Delete failed", detail: error.message });
     },
   });
 
   const ping = useMutation({
     mutationFn: (id: string) => pingWebhook(id),
-    onSuccess: (data) => {
-      void alert(`Ping queued / delivered (see logs).\n\n${JSON.stringify(data, null, 2)}`);
+    onSuccess: () => {
+      pushToast({
+        tone: "info",
+        title: "Ping sent",
+        detail: "Check delivery logs for confirmation.",
+      });
+    },
+    onError: (error: Error) => {
+      pushToast({ tone: "error", title: "Ping failed", detail: error.message });
     },
   });
 
@@ -123,7 +156,7 @@ export function WebhooksPage() {
 
   if (list.isLoading) {
     return (
-      <div className="flex h-40 justify-center">
+      <div className="flex h-40 items-center justify-center">
         <Spinner />
       </div>
     );
@@ -244,11 +277,7 @@ export function verifyUpWebhook(rawBody, receivedSignatureHex, secretKey) {
                   variant="danger"
                   className="!py-1 text-xs"
                   disabled={remove.isPending}
-                  onClick={() => {
-                    if (confirm("Delete this webhook?")) {
-                      remove.mutate(w.id);
-                    }
-                  }}
+                  onClick={() => setPendingDelete(w.id)}
                 >
                   Delete
                 </Button>
@@ -335,14 +364,7 @@ export function verifyUpWebhook(rawBody, receivedSignatureHex, secretKey) {
                     <tbody className="divide-y divide-[var(--up-border)]">
                       {logRows.map((l) => {
                         const delivery = l.attributes.deliveryStatus;
-                        const deliveryClass =
-                          delivery === "DELIVERED"
-                            ? "text-emerald-300"
-                            : delivery === "UNDELIVERABLE"
-                              ? "text-amber-200"
-                              : delivery === "BAD_RESPONSE_CODE"
-                                ? "text-red-300"
-                                : "text-[var(--up-muted)]";
+                        const deliveryClass = deliveryClassFor(delivery);
                         const isExpanded = expandedLogId === l.id;
                         return (
                           <Fragment key={l.id}>
@@ -419,6 +441,20 @@ export function verifyUpWebhook(rawBody, receivedSignatureHex, secretKey) {
           </Card>
         </>
       ) : null}
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title="Delete webhook?"
+        detail="This permanently removes the webhook from Up."
+        confirmLabel="Delete"
+        danger
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={() => {
+          if (pendingDelete) {
+            remove.mutate(pendingDelete);
+          }
+          setPendingDelete(null);
+        }}
+      />
     </div>
   );
 }

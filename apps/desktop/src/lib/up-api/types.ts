@@ -128,5 +128,6 @@ export type UpErrorPayload = {
     status?: string;
     title?: string;
     detail?: string;
+    source?: { parameter?: string };
   }>;
 };

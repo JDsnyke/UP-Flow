@@ -9,4 +9,4 @@ The original UP Flow shipped as a **Ruby + Shoes 3** GUI with:
 
 **Do not use this path for new development.** The maintained replacement is [`apps/desktop`](apps/desktop) (Tauri + React).
 
-If you need historical behavior, see `app.rb` and `assets/engine.rb`. Prefer porting features into the new app’s `src/features/` modules and `src/lib/up-api/` client.
+If you need historical behavior, see `legacy/app.rb` and `legacy/assets/engine.rb`. Prefer porting features into the new app’s `src/features/` modules and `src/lib/up-api/` client.
